@@ -2,6 +2,7 @@
 #include <osmium/handler.hpp>
 #include <osmium/visitor.hpp>
 #include <osmium/osm/node.hpp>
+#include <filesystem>
 #include <iostream>
 #include <unordered_map>
 #include <map>
@@ -11,9 +12,9 @@
 class NodeHandler : public osmium::handler::Handler
 {
 public:
-//std::map<int, std::vector<std::tuple<int, double, double>>> osm_nodes;
-std::unordered_map<osmium::object_id_type, std::pair<double, double>> osm_nodes_map;
-std::unordered_map<osmium::object_id_type, std::vector<osmium::object_id_type>> osm_ways_map;
+    // std::map<int, std::vector<std::tuple<int, double, double>>> osm_nodes;
+    std::unordered_map<osmium::object_id_type, std::pair<double, double>> osm_nodes_map;
+    std::unordered_map<osmium::object_id_type, std::vector<osmium::object_id_type>> osm_ways_map;
     void node(const osmium::Node &node)
     {
         if (node.location())
@@ -31,31 +32,33 @@ std::unordered_map<osmium::object_id_type, std::vector<osmium::object_id_type>> 
             node_ids.push_back(node_ref.ref());
         }
         osm_ways_map[way.id()] = node_ids;
-
     }
 };
 
-void write_way_to_file(const std::vector<osmium::object_id_type>& node_ids,
-    const std::unordered_map<osmium::object_id_type,
-                             std::pair<double,double>>& node_map,
-    const std::string&      out_file)
+void write_way_to_file(const std::vector<osmium::object_id_type> &node_ids,
+                       const std::unordered_map<osmium::object_id_type,
+                                                std::pair<double, double>> &node_map,
+                       const std::string &out_file)
 {
-std::ofstream out(out_file);          // truncates if file exists
-if (!out) {
-std::cerr << "Cannot open '" << out_file << "' for writing\n";
-return;
-}
-// header row (optional)
-out << "lat,lon\n";
+    std::ofstream out(out_file); // truncates if file exists
+    if (!out)
+    {
+        std::cerr << "Cannot open '" << out_file << "' for writing\n";
+        return;
+    }
+    // header row (optional)
+    out << "lat,lon\n";
 
-for (auto nid : node_ids) {
-auto it = node_map.find(nid);
-if (it != node_map.end()) {
-out << it->second.first  << ','       // lat
-<< it->second.second << '\n';      // lon
-}
-}
-std::cout << "Wrote " << node_ids.size() << " points → " << out_file << '\n';
+    for (auto nid : node_ids)
+    {
+        auto it = node_map.find(nid);
+        if (it != node_map.end())
+        {
+            out << it->second.first << ','    // lat
+                << it->second.second << '\n'; // lon
+        }
+    }
+    std::cout << "Wrote " << node_ids.size() << " points → " << out_file << '\n';
 }
 
 int main(int argc, char *argv[])
@@ -69,7 +72,7 @@ int main(int argc, char *argv[])
 
     // parse command line arguements
     osmium::io::Reader reader(argv[1]);
-    const char* way_str = argv[2];
+    const char *way_str = argv[2];
 
     // read through the .osm file
     NodeHandler handler;
@@ -77,11 +80,11 @@ int main(int argc, char *argv[])
     reader.close();
 
     // parse way id
-    char* endptr = nullptr;
+    char *endptr = nullptr;
     osmium::object_id_type way_id = static_cast<osmium::object_id_type>(
-        std::strtoll(way_str, &endptr, 10)
-    );
-    if (*endptr != '\0') {
+        std::strtoll(way_str, &endptr, 10));
+    if (*endptr != '\0')
+    {
         std::cerr << "Invalid way id: " << way_str << '\n';
         return 1;
     }
@@ -89,21 +92,29 @@ int main(int argc, char *argv[])
     // process way id into csv
     int way_ID = way_id;
     auto it = handler.osm_ways_map.find(way_ID);
-    if (it != handler.osm_ways_map.end()) {
-        std::string filename = "way_" + std::to_string(way_ID) + ".csv";
+    if (it != handler.osm_ways_map.end())
+    {
+        const std::string out_dir = "out";
+        std::filesystem::create_directories(out_dir);
+        std::string filename = out_dir + "/way_" + std::to_string(way_ID) + ".csv";
         write_way_to_file(it->second, handler.osm_nodes_map, filename);
-        for (const auto& node_id : it->second) {
+        for (const auto &node_id : it->second)
+        {
             auto node_it = handler.osm_nodes_map.find(node_id);
-            if (node_it != handler.osm_nodes_map.end()) {
-                const auto& [lat, lon] = node_it->second;
-            } else {
+            if (node_it != handler.osm_nodes_map.end())
+            {
+                const auto &[lat, lon] = node_it->second;
+            }
+            else
+            {
                 std::cout << "  Node ID: " << node_id << " (location not found)\n";
             }
         }
-    } else {
+    }
+    else
+    {
         std::cout << "Way ID " << way_ID << " not found.\n";
     }
-    
-    
+
     return 0;
 }

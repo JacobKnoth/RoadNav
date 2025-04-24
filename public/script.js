@@ -7,14 +7,14 @@ let lat = 100;
 let lon = 100;
 
 
-// quick CSV→polyline helper
-async function addRoadFromCSV(url, lineOptions = {color:'red',weight:6}) {
-    const txt  = await fetch(url).then(r => r.text());
-    const rows = txt.trim().split('\n').slice(1);          // skip header
-    const coords = rows.map(r => r.split(',').map(Number)) // [[lat,lon], …]
-                       .map(([lat, lon]) => [lat, lon]);   // Leaflet expects this order
-    L.polyline(coords, lineOptions).addTo(map);
-  }
+async function addRoadFromServer(wayId, style = { color: 'red', weight: 6 }) {
+    const res = await fetch(`/way/${wayId}`);
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+    const txt = await res.text();
+    const rows = txt.trim().split('\n').slice(1);
+    const coords = rows.map(r => r.split(',').map(Number));
+    L.polyline(coords, style).addTo(map);
+}
 
 // pushes the location to the map
 function publishLocation(position) {
@@ -41,16 +41,14 @@ function createMap() {
         .openPopup();
 }
 document.addEventListener('DOMContentLoaded', () => {
-    const btn  = document.getElementById('highlight');
-    const inp  = document.getElementById('wayinput');
-  
+    const btn = document.getElementById('highlight');
+    const inp = document.getElementById('wayinput');
+
+    // Button handler
     btn.addEventListener('click', () => {
-      const wayId = inp.value.trim();
-      if (!wayId) { alert('Enter a way id'); return; }
-  
-      // build the filename your C++ exporter writes, e.g. way_123456.csv
-      const file = `way_${wayId}.csv`;
-      addRoadFromCSV(file, { color: 'orange', weight: 6 })
-        .catch(() => alert(`Could not load ${file}`));
+        const wayId = inp.value.trim();
+        if (!wayId) { alert('Enter a way id'); return; }
+        addRoadFromServer(wayId, { color: 'orange', weight: 6 })
+            .catch(e => alert(e.message));
     });
-  });
+});
