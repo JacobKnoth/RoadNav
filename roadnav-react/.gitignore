@@ -1,5 +1,9 @@
-# Logs
-logs
+############################################################
+# Runtime stuff you never want in Git
+############################################################
+node_modules/
+dist/
+dist-ssr/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,15 +11,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Local env / secrets (add more as needed)
+.env.local
+.env.*.local   # catches .env.development.local, etc.
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Editor & OS cruft
+.vscode/
+!.vscode/extensions.json   # keep shared recommendations
+.idea/
 .DS_Store
 *.suo
 *.ntvs*

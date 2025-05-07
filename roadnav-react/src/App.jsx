@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Toolbar from './components/Toolbar';
 import MapView from './components/MapView';
+import AuthButtons from './components/AuthButtons';
 import { geocode, fetchRoadLines } from './services/api';
 
 export default function App() {
@@ -30,7 +31,7 @@ export default function App() {
     try {
       const lines = await fetchRoadLines(name, bbox());
       //setMarkers([]);            // clear any address markers
-      setLines(lines);
+      setLines(prev => [...prev, ...lines]);
     } catch (err) {
       alert(
         err.message === 'none'
@@ -43,7 +44,10 @@ export default function App() {
   return (
     <>
       <Container className="pt-3">
-        <h2 className="mb-3">RoadNav (React + Bootstrap)</h2>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="mb-0">RoadNav (React + Bootstrap)</h2>
+        <AuthButtons />      {/* shows “Sign in” or user + Sign out */}
+        </div>
         <Toolbar onAddresses={handleAddresses} onRoad={handleRoad} />
       </Container>
 
