@@ -1,8 +1,21 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 2rem;
-  text-align: center;
+  text-align: left;
+}
+
+@media (min-width: 1600px) {
+  #root {
+    max-width: 1440px;
+    margin: left auto;
+  }
+}
+
+.route-sidebar {
+  min-width: 300px;
+  padding-left: 1rem;
+  border-left: 1px solid #ddd;
 }
 
 .logo {

@@ -1,14 +1,18 @@
 import { useState } from 'react';
-import Container from 'react-bootstrap/Container';
+import { Container, Row, Col } from 'react-bootstrap';
 import Toolbar from './components/Toolbar';
 import MapView from './components/MapView';
 import AuthButtons from './components/AuthButtons';
 import { geocode, fetchRoadLines } from './services/api';
+import './App.css';
+
 
 export default function App() {
-  const [map, setMap]         = useState(null);
+  const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [polylines, setLines] = useState([]);
+  const [selectedRoad, setSelectedRoad] = useState(null);
+
 
   /* helper: return current viewport or world */
   const bbox = () => {
@@ -40,22 +44,35 @@ export default function App() {
       );
     }
   }
-
+  
   return (
-    <>
-      <Container className="pt-3">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="mb-0">RoadNav (React + Bootstrap)</h2>
-        <AuthButtons />      {/* shows “Sign in” or user + Sign out */}
-        </div>
-        <Toolbar onAddresses={handleAddresses} onRoad={handleRoad} />
-      </Container>
+    <Container fluid className="pt-3">
+      <h2 className="mb-3 d-flex justify-content-between">
+        RoadNav (Mockup)
+        <AuthButtons />
+      </h2>
 
-      <MapView
-        markers={markers}
-        polylines={polylines}
-        onMapReady={setMap}      // passes map instance up
-      />
-    </>
+      <Row>
+        <Col md={9}>
+          <Toolbar onAddresses={handleAddresses} onRoad={handleRoad} />
+          <MapView
+            markers={markers}
+            polylines={polylines}
+            onMapReady={setMap}
+            onSelectRoad={setSelectedRoad}
+            selectedRoad={selectedRoad}
+          />
+        </Col>
+
+        <Col md={3}>
+          <div className="route-sidebar">
+            <h5>Routes</h5>
+            {/* Placeholder: you’ll fill this later with route options */}
+            <p>No routes loaded yet.</p>
+          </div>
+        </Col>
+      </Row>
+    </Container>
+
   );
 }
