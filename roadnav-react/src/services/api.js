@@ -1,3 +1,4 @@
+import polyline from '@mapbox/polyline';
 export async function geocode(addr) {
   const url =
     'https://nominatim.openstreetmap.org/search' +
@@ -9,10 +10,10 @@ export async function geocode(addr) {
   if (!data.length) throw new Error('notfound');
   return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
 }
-  
+
 // src/services/api.js
 export async function fetchRoadLines(name, bbox) {
-  // escape regex metacharacters so Overpass doesn’t choke on e.g. “Bob's I‑5”
+  // escape regex metacharacters so api doesn't freak out over weird inputs
   const safe = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   const query = `
@@ -40,4 +41,38 @@ export async function fetchRoadLines(name, bbox) {
     .map(way => way.geometry.map(pt => [pt.lat, pt.lon]));
 }
 
-  
+/**
+* Ask Valhalla for a route and give back an array of [lat,lon] pairs
+* ready for <Polyline positions={…}>.
+*
+* @param {[number,number]} from  [lat, lon]
+* @param {[number,number]} to    [lat, lon]
+*/
+export async function fetchRoute(from, to) {
+  const body = {
+    locations: [
+      { lat: from[0], lon: from[1], type: 'break' },
+      { lat: to[0], lon: to[1], type: 'break' }
+    ],
+    costing: 'motorcycle',                 // motorcycle has been mofidied to prefer curvy roads
+        costing_options: {
+      motorcycle: {
+        "disable_hierarchy_pruning": true,
+        "top_speed": 50 // km/h
+      }
+    },
+    directions_options: { units: 'km' }
+  };
+
+  const res = await fetch('/route', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('valhalla');
+
+  const json = await res.json();
+  const encoded = json.trip.legs[0].shape;   // polyline6
+  return polyline.decode(encoded, 6)         // => [[lat, lon], …]
+    .map(([lat, lon]) => [lat, lon]); // flip to Leaflet order
+}

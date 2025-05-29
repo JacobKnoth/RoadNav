@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Toolbar from './components/Toolbar';
 import MapView from './components/MapView';
 import AuthButtons from './components/AuthButtons';
-import { geocode, fetchRoadLines } from './services/api';
+import { geocode, fetchRoadLines , fetchRoute} from './services/api';
 import './App.css';
 
 
@@ -14,7 +14,7 @@ export default function App() {
   const [selectedRoad, setSelectedRoad] = useState(null);
 
 
-  /* helper: return current viewport or world */
+  /* return current viewport or world */
   const bbox = () => {
     if (!map) return '-90,-180,90,180';
     const b = map.getBounds();
@@ -24,9 +24,12 @@ export default function App() {
   async function handleAddresses(a, b) {
     try {
       const [m1, m2] = await Promise.all([geocode(a), geocode(b)]);
-      setLines([]);              // clear road lines
+      // setLines([]);              // clear road lines
       setMarkers([m1, m2]);
-    } catch (err) {
+      const route = await fetchRoute(m1, m2);
+      setLines([route]);
+    } catch (err) {const route = await fetchRoute(m1, m2);
++    setLines([route]);
       alert(err.message === 'notfound' ? 'Address not found.' : 'Network error.');
     }
   }
@@ -67,7 +70,7 @@ export default function App() {
         <Col md={3}>
           <div className="route-sidebar">
             <h5>Routes</h5>
-            {/* Placeholder: you’ll fill this later with route options */}
+            {/* Placeholder: fill this later with route options */}
             <p>No routes loaded yet.</p>
           </div>
         </Col>
