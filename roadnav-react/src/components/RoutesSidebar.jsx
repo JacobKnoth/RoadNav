@@ -1,14 +1,15 @@
 // src/components/RoutesSidebar.jsx
 import { useEffect, useState } from 'react';
 import { collection, onSnapshot, orderBy, query, deleteDoc, doc } from 'firebase/firestore';
-import { auth, db } from '../services/firebase';     // adjust path
+import { auth, db } from '../services/firebase';
+import { pointsToGpx, downloadText } from './gpx';
 import polyline from '@mapbox/polyline';
 import Spinner from 'react-bootstrap/Spinner';
-import Button  from 'react-bootstrap/Button';
+import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 export default function RoutesSidebar({ onSelect }) {
-  const [routes, setRoutes]   = useState([]);
+  const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function RoutesSidebar({ onSelect }) {
             onClick={() => {
               // Decode and hand path + meta back to parent
               const points = polyline.decode(r.encoded, 6)
-                                    .map(([lat, lon]) => [lat, lon]);
+                .map(([lat, lon]) => [lat, lon]);
               onSelect(points, r);
             }}
           >
@@ -73,15 +74,40 @@ export default function RoutesSidebar({ onSelect }) {
               </span>
 
               {
-              <Button
-                size="sm"
-                variant="outline-danger"
-                onClick={async e => {
-                  e.stopPropagation();
-                  await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'routes', r.id));
-                }}
-              >
-              </Button>
+                <div className="btn-group">
+                  {/* Download GPX */}
+                  <Button
+                    size="sm"
+                    variant="outline-primary"
+                    title="Download GPX"
+                    onClick={e => {
+                      e.stopPropagation();                      // don’t trigger select
+                      const points = polyline
+                        .decode(r.encoded, 6)
+                        .map(([lat, lon]) => [lat, lon]);
+                      const gpx = pointsToGpx(points, 'RoadNav route');
+                      const fname = `route-${r.id}.gpx`;
+                      downloadText(gpx, fname);
+                    }}
+                  >
+                    ⬇︎
+                  </Button>
+
+                  {/* Delete */}
+                  <Button
+                    size="sm"
+                    variant="outline-danger"
+                    title="Delete route"
+                    onClick={async e => {
+                      e.stopPropagation();
+                      await deleteDoc(
+                        doc(db, 'users', auth.currentUser.uid, 'routes', r.id)
+                      );
+                    }}
+                  >
+                    🗑
+                  </Button>
+                </div>
               }
             </div>
           </ListGroup.Item>
