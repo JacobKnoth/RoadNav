@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Form, InputGroup, Row, Col } from 'react-bootstrap';
 
-export default function Toolbar({ onAddresses, onRoad }) {
+export default function Toolbar({ onAddresses, onRoad, setRoutingOption }) {
   const [addrA, setAddrA] = useState('');
   const [addrB, setAddrB] = useState('');
   const [road, setRoad]   = useState('');
@@ -16,10 +16,17 @@ export default function Toolbar({ onAddresses, onRoad }) {
       </Row>
 
       <h5 className="mt-3">Road name</h5>
-      <InputGroup>
+      <InputGroup className="mb-3">
         <Form.Control value={road} onChange={e=>setRoad(e.target.value)} placeholder="Road name" />
         <Button variant="secondary" onClick={() => onRoad(road)}>Highlight</Button>
       </InputGroup>
+
+      <h5 className="mt-3">Routing Options</h5>
+      <Form.Select onChange={e => setRoutingOption(e.target.value)} defaultValue="motorcycle">
+        <option value="motorcycle">Curvy Nav</option>
+        <option value="bicycle">Bicycle</option>
+        <option value="auto">Default</option>
+      </Form.Select>
     </div>
   );
 }

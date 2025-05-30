@@ -3,8 +3,11 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Toolbar from './components/Toolbar';
 import MapView from './components/MapView';
 import AuthButtons from './components/AuthButtons';
-import { geocode, fetchRoadLines , fetchRoute} from './services/api';
+import { geocode, fetchRoadLines, fetchRoute } from './services/api';
 import './App.css';
+import polyline from '@mapbox/polyline';
+import { saveRouteForUser } from './services/saveroute';
+import RoutesSidebar from './components/RoutesSidebar';
 
 
 export default function App() {
@@ -21,16 +24,48 @@ export default function App() {
     return `${b.getSouth()},${b.getWest()},${b.getNorth()},${b.getEast()}`;
   };
 
+  const [routingOption, setRoutingOption] = useState('motorcycle');
   async function handleAddresses(a, b) {
     try {
       const [m1, m2] = await Promise.all([geocode(a), geocode(b)]);
-      // setLines([]);              // clear road lines
       setMarkers([m1, m2]);
-      const route = await fetchRoute(m1, m2);
+      const trip = await fetchRoute(m1, m2, routingOption);
+      console.log('Routing option ➜', routingOption);
+      console.log('Trip object from Valhalla ➜', trip);
+
+      // const encoded = trip.legs[0].shape;   // polyline6
+      const encoded = trip?.legs?.[0]?.shape;
+      if (!encoded) throw new Error('shape_missing');
+      const route = polyline.decode(encoded, 6).map(([lat, lon]) => [lat, lon]); // flip to Leaflet order
       setLines([route]);
-    } catch (err) {const route = await fetchRoute(m1, m2);
-+    setLines([route]);
-      alert(err.message === 'notfound' ? 'Address not found.' : 'Network error.');
+      let visualRoutingOption = routingOption;
+      if (visualRoutingOption === 'motorcycle') {
+        visualRoutingOption = 'Curvy Nav';
+      }
+      if (visualRoutingOption === 'bicycle') {
+        visualRoutingOption = 'Bicycle';
+      }
+      if (visualRoutingOption === 'auto') {
+        visualRoutingOption = 'Default';
+      }
+      saveRouteForUser({
+        from: m1,
+        to: m2,
+        profile: visualRoutingOption,
+        encoded: encoded,
+        trip
+      }).catch(console.error);
+    } catch (err) {
+      console.error('handleAddresses error ➜', err);       // 🚨 real reason
+      const msg =
+        err.message === 'notfound'
+          ? 'Address not found.'
+          : err.message === 'shape_missing'
+            ? 'Valhalla did not return a shape.'
+            : err.message.startsWith('polyline')
+              ? 'Could not decode route geometry.'
+              : 'Unexpected error – check console.';
+      alert(msg);
     }
   }
 
@@ -47,7 +82,13 @@ export default function App() {
       );
     }
   }
-  
+
+    const handleSelectSaved = (points, meta) => {
+    setLines([points]);
+    setMarkers([meta.from, meta.to]);
+    // optional: pan/fit map if MapView exposes a method  
+  };
+
   return (
     <Container fluid className="pt-3">
       <h2 className="mb-3 d-flex justify-content-between">
@@ -57,7 +98,11 @@ export default function App() {
 
       <Row>
         <Col md={9}>
-          <Toolbar onAddresses={handleAddresses} onRoad={handleRoad} />
+          <Toolbar
+            onAddresses={handleAddresses}
+            onRoad={handleRoad}
+            setRoutingOption={setRoutingOption}
+          />
           <MapView
             markers={markers}
             polylines={polylines}
@@ -73,6 +118,10 @@ export default function App() {
             {/* Placeholder: fill this later with route options */}
             <p>No routes loaded yet.</p>
           </div>
+          <RoutesSidebar
+            onSelect={handleSelectSaved}
+            bbox={bbox}
+            routingOption={routingOption} />
         </Col>
       </Row>
     </Container>

@@ -11,6 +11,10 @@ export default defineConfig({
         target: 'http://localhost:8002',
         changeOrigin: true,
         rewrite: path => path               // leave “/route” intact
+      },
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
       }
     }
   }

@@ -4,7 +4,6 @@ import { Popup, useMapEvents } from 'react-leaflet';
 
 
 export default function MapView({ markers, polylines, selectedRoad,onSelectRoad }) {
-  console.log('MapView received selectedRoad:', selectedRoad);
   return (
     <MapContainer
       center={[37.77, -122.42]}
