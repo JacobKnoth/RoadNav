@@ -16,8 +16,11 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "firebase": "^11.8.1",
+    "firestore": "^1.1.6",
+    "leaflet": "^1.9.4",
     "mongoose": "^8.15.1",
     "react": "^19.1.0",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",
     "typescript": "^5.8.3"

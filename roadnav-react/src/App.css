@@ -1,9 +1,13 @@
 #root {
   width: 100%;
+  height: 100%;
   margin: 0;
   padding: 2rem;
   text-align: left;
+  background-color: rgb(230, 248, 248);
 }
+
+
 
 @media (min-width: 1600px) {
   #root {
@@ -52,4 +56,30 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.section-title {
+  font-weight: 600;
+  margin-top: 24px;
+}
+.roadnav-title {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

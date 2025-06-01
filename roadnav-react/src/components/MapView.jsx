@@ -3,56 +3,57 @@ import { useEffect } from 'react';
 import { Popup, useMapEvents } from 'react-leaflet';
 
 
-export default function MapView({ markers, polylines, selectedRoad,onSelectRoad }) {
+export default function MapView({ markers, polylines, selectedRoad, onSelectRoad }) {
   return (
-    <MapContainer
-      center={[37.77, -122.42]}
-      zoom={13}
-      style={{ height: '80vh', width: '100%' }}
-    >
-      <ClearPopupOnClick onClear={onSelectRoad} />
+    <div className="map-frame">
+      <MapContainer
+        center={[37.77, -122.42]}
+        zoom={13}
+        style={{ height: '70vh', width: '100%' }}
+      >
+        <ClearPopupOnClick onClear={onSelectRoad} />
 
-      <TileLayer
-        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; OpenStreetMap contributors"
-      />
-      {markers.map((m, i) => <Marker key={i} position={m} />)}
-      {polylines.map((line, i) => (
-        <Polyline
-          key={i}
-          positions={line}
-          pathOptions={{ color: 'orange', weight: 5 }}
-          eventHandlers={{
-            click: () => {
-              console.log('Polyline clicked:', i);
-              if (onSelectRoad) {
-                onSelectRoad({ id: i, positions: line });
-              }
-            }
-          }}
-          
+        <TileLayer
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
         />
-      ))}
-      console.log('Selected road:', selectedRoad);
-      {selectedRoad && (
-        <Popup position={selectedRoad.positions[0]}>
-          <div>
-            <strong>East Fork Road</strong><br />
-            Curvature: 4,797 (320/km)<br />
-            Length: 15 km<br />
-            Highway: residential<br />
-            Speed Limit: unknown<br />
-            Surface: paved<br />
-            Smoothness: unknown<br />
-            <hr />
-            <a href="#">View or Edit</a>
-          </div>
-        </Popup>
-      )}
+        {markers.map((m, i) => <Marker key={i} position={m} />)}
+        {polylines.map((line, i) => (
+          <Polyline
+            key={i}
+            positions={line}
+            pathOptions={{ color: 'orange', weight: 5 }}
+            eventHandlers={{
+              click: () => {
+                console.log('Polyline clicked:', i);
+                if (onSelectRoad) {
+                  onSelectRoad({ id: i, positions: line });
+                }
+              }
+            }}
+          />
+        ))}
 
+        {selectedRoad && (
+          <Popup position={selectedRoad.positions[0]}>
+            <div>
+              <strong>East Fork Road</strong><br />
+              Curvature: 4,797 (320/km)<br />
+              Length: 15 km<br />
+              Highway: residential<br />
+              Speed Limit: unknown<br />
+              Surface: paved<br />
+              Smoothness: unknown<br />
+              <hr />
+              <a href="#">View or Edit</a>
+            </div>
+          </Popup>
+        )}
 
-      <FitAll markers={markers} polylines={polylines} />
-    </MapContainer>
+        <FitAll markers={markers} polylines={polylines} />
+      </MapContainer>
+    </div>
+
   );
 }
 
