@@ -53,6 +53,7 @@ export default function App() {
         to: m2,
         profile: visualRoutingOption,
         encoded: encoded,
+        name : `${a} to ${b}`,
         trip
       }).catch(console.error);
     } catch (err) {

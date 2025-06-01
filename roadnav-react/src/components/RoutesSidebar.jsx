@@ -1,6 +1,6 @@
 // src/components/RoutesSidebar.jsx
 import { useEffect, useState } from 'react';
-import { collection, onSnapshot, orderBy, query, deleteDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
 import { pointsToGpx, downloadText } from './gpx';
 import polyline from '@mapbox/polyline';
@@ -68,10 +68,15 @@ export default function RoutesSidebar({ onSelect }) {
             }}
           >
             <div className="d-flex justify-content-between align-items-center">
+
+                            {/* summary text */}
               <span>
-                {r.profile} · {r.from[0].toFixed(2)},{r.from[1].toFixed(2)}
-                &nbsp;→&nbsp;
-                {r.to[0].toFixed(2)},{r.to[1].toFixed(2)}
+                <strong>{r.name ?? 'Unnamed route'}</strong><br />
+                <small className="text-muted">
+                  {r.profile} · {r.from[0].toFixed(2)},{r.from[1].toFixed(2)}
+                  &nbsp;→&nbsp;
+                  {r.to[0].toFixed(2)},{r.to[1].toFixed(2)}
+                </small>
               </span>
 
               {
@@ -93,6 +98,24 @@ export default function RoutesSidebar({ onSelect }) {
                   >
                     ⬇︎
                   </Button>
+                  
+                {/* Rename */}
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  title="Rename route"
+                  onClick={async e => {
+                    e.stopPropagation();
+                    const newName = window.prompt('Route name:', r.name ?? '');
+                    if (!newName) return;
+                    await updateDoc(
+                      doc(db, 'users', auth.currentUser.uid, 'routes', r.id),
+                      { name: newName }
+                    );
+                  }}
+                >
+                  ✏️
+                </Button>
 
                   {/* Delete */}
                   <Button
