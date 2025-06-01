@@ -2,7 +2,7 @@ import polyline from '@mapbox/polyline';
 export async function geocode(addr) {
   const url =
     'https://nominatim.openstreetmap.org/search' +
-    `?format=jsonv2&limit=1&email=my@example.com&q=${encodeURIComponent(addr)}`;
+    `?format=jsonv2&limit=1&email=jakek1406@gmail.com.com&q=${encodeURIComponent(addr)}`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error('net');

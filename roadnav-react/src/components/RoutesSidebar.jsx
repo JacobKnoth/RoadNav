@@ -59,6 +59,7 @@ export default function RoutesSidebar({ onSelect }) {
           <ListGroup.Item
             key={r.id}
             action
+            as="div"
             onClick={() => {
               // Decode and hand path + meta back to parent
               const points = polyline.decode(r.encoded, 6)
@@ -81,7 +82,7 @@ export default function RoutesSidebar({ onSelect }) {
                     variant="outline-primary"
                     title="Download GPX"
                     onClick={e => {
-                      e.stopPropagation();                      // don’t trigger select
+                      e.stopPropagation();              
                       const points = polyline
                         .decode(r.encoded, 6)
                         .map(([lat, lon]) => [lat, lon]);
