@@ -69,13 +69,14 @@ export default function RoutesSidebar({ onSelect }) {
           >
             <div className="d-flex justify-content-between align-items-center">
 
-                            {/* summary text */}
+                            {/* route name and subtitle*/}
               <span>
+                
                 <strong>{r.name ?? 'Unnamed route'}</strong><br />
                 <small className="text-muted">
-                  {r.profile} · {r.from[0].toFixed(2)},{r.from[1].toFixed(2)}
+                  {r.profile} · {r.add1}
                   &nbsp;→&nbsp;
-                  {r.to[0].toFixed(2)},{r.to[1].toFixed(2)}
+                  {r.add2}
                 </small>
               </span>
 

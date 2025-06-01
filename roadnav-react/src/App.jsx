@@ -51,6 +51,8 @@ export default function App() {
       saveRouteForUser({
         from: m1,
         to: m2,
+        add1: a,
+        add2: b,
         profile: visualRoutingOption,
         encoded: encoded,
         name : `${a} to ${b}`,
