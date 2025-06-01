@@ -15,12 +15,6 @@ export default function Toolbar({ onAddresses, onRoad, setRoutingOption }) {
         <Col md={2}><Button className="w-100" onClick={() => onAddresses(addrA, addrB)}>Show</Button></Col>
       </Row>
 
-      <h5 className="mt-3">Road name</h5>
-      <InputGroup className="mb-3">
-        <Form.Control value={road} onChange={e=>setRoad(e.target.value)} placeholder="Road name" />
-        <Button variant="secondary" onClick={() => onRoad(road)}>Highlight</Button>
-      </InputGroup>
-
       <h5 className="mt-3">Routing Options</h5>
       <Form.Select onChange={e => setRoutingOption(e.target.value)} defaultValue="motorcycle">
         <option value="motorcycle">Curvy Nav</option>
