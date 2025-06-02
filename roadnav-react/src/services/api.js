@@ -72,7 +72,7 @@ export async function fetchRoute(from, to, option) {
     directions_options: { units: 'km' }
   };
   
-  const res = await fetch('/route', {
+  const res = await fetch("http://34.127.57.157/valhalla/route", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
