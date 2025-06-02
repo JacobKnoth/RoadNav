@@ -8,7 +8,7 @@ import './App.css';
 import polyline from '@mapbox/polyline';
 import { saveRouteForUser } from './services/saveroute';
 import RoutesSidebar from './components/RoutesSidebar';
-
+import FriendsSidebar from './components/FriendsSidebar';
 
 export default function App() {
   const [map, setMap] = useState(null);
@@ -121,15 +121,20 @@ export default function App() {
         </Col>
 
         <Col md={3}>
-          <div className="route-sidebar">
-            <h5>Routes</h5>
-            {/* Placeholder: fill this later with route options */}
-            <p>No routes loaded yet.</p>
+          <div className="right-rail d-flex gap-3">
+            <div className="flex-fill">
+              <RoutesSidebar
+                onSelect={handleSelectSaved}
+                bbox={bbox}
+                routingOption={routingOption} />
+            </div>
           </div>
-          <RoutesSidebar
-            onSelect={handleSelectSaved}
-            bbox={bbox}
-            routingOption={routingOption} />
+          <div>
+            <div className="flex-fill">
+              <FriendsSidebar />
+            </div>
+          </div>
+
         </Col>
       </Row>
     </Container>
