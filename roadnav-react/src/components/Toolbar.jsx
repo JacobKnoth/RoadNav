@@ -8,7 +8,7 @@ export default function Toolbar({ onAddresses, onRoad, setRoutingOption }) {
 
   return (
     <div className="mb-3">
-      <h5>Two addresses</h5>
+      <h5>Enter Addresses</h5>
       <Row className="g-2 mb-2">
         <Col md={5}><Form.Control value={addrA} onChange={e=>setAddrA(e.target.value)} placeholder="Start address" /></Col>
         <Col md={5}><Form.Control value={addrB} onChange={e=>setAddrB(e.target.value)} placeholder="End address" /></Col>

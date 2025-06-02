@@ -22,6 +22,46 @@ a:hover {
   color: #535bf2;
 }
 
+.map-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 20px auto;
+  max-width: 1200px;
+  border: 1px solid #e0e0e0;
+}
+
+.map-card-header {
+  background: #007bff;
+  color: white;
+  font-weight: 600;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.map-card-body {
+  padding: 0;
+}
+
+.map-frame {
+  background-color: #f0f4f8; /* light subtle background */
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #d0d7de;
+  overflow: hidden;
+  margin: 20px auto;
+  max-width: 100%;
+}
+
+.leaflet-container {
+  border-radius: 12px;
+}
+
+
+
 body {
   margin: 0;
   display: flex;

@@ -59,7 +59,7 @@ export default function App() {
         trip
       }).catch(console.error);
     } catch (err) {
-      console.error('handleAddresses error ➜', err);       // 🚨 real reason
+      console.error('handleAddresses error ➜', err);   
       const msg =
         err.message === 'notfound'
           ? 'Address not found.'
@@ -86,7 +86,7 @@ export default function App() {
     }
   }
 
-    const handleSelectSaved = (points, meta) => {
+  const handleSelectSaved = (points, meta) => {
     setLines([points]);
     setMarkers([meta.from, meta.to]);
     // optional: pan/fit map if MapView exposes a method  
@@ -94,11 +94,16 @@ export default function App() {
 
   return (
     <Container fluid className="pt-3">
-      <h2 className="mb-3 d-flex justify-content-between">
-        RoadNav (Mockup)
+      <h2 className="mb-3 d-flex justify-content-between align-items-center">
+        <span className="roadnav-title d-flex align-items-center gap-2">
+          <span role="img" aria-label="map">🗺️</span>
+          <span>Road<span style={{ color: '#4285f4' }}>Nav</span></span>
+        </span>
         <AuthButtons />
       </h2>
-
+      <p className="text-muted">
+        Find curvy roads, plan routes, and save them for later.
+      </p>
       <Row>
         <Col md={9}>
           <Toolbar
