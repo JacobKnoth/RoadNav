@@ -1,4 +1,4 @@
-Accessable at http://34.83.136.170/
+Accessable at http://http://34.11.232.243//
 
 
 Inorder to build you will need the following npm modules
